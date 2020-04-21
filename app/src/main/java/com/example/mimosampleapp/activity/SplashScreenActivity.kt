@@ -1,9 +1,10 @@
-package com.example.mimosampleapp
+package com.example.mimosampleapp.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import com.example.mimosampleapp.R
 
 class SplashScreenActivity : AppCompatActivity() {
 
