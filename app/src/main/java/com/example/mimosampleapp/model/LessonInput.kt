@@ -1,9 +1,12 @@
 package com.example.mimosampleapp.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class LessonInput {
+class LessonInput : Serializable {
 
     @SerializedName("startIndex")
     @Expose
@@ -12,4 +15,6 @@ class LessonInput {
     @SerializedName("endIndex")
     @Expose
     var endIndex: Int? = null
+
+
 }

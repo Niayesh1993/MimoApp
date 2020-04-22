@@ -34,9 +34,6 @@ class UserService(context: Context) {
         try {
             val call = caller.getLesson()
             call.enqueue(object : Callback<ApiResultModel> {
-                override fun onFailure(call: Call<ApiResultModel>, t: Throwable) {
-                    Helpers().HandleErrors(t, context, apiCallbackListener)
-                }
 
                 override fun onResponse(
                     call: Call<ApiResultModel>,
@@ -50,6 +47,10 @@ class UserService(context: Context) {
                         //Toast.makeText(context,"Error in login"+e.getMessage(),Toast.LENGTH_LONG).show();
                         Log.e("Error in login", e.message)
                     }
+                }
+
+                override fun onFailure(call: Call<ApiResultModel>, t: Throwable) {
+                    Helpers().HandleErrors(t, context, apiCallbackListener)
                 }
 
             })
