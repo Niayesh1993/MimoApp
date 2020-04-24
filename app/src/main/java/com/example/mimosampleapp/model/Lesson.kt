@@ -6,7 +6,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class Lesson() : Serializable {
+class Lesson() : Serializable, Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -21,6 +21,10 @@ class Lesson() : Serializable {
 
     var pass_status: Boolean = false
 
+    constructor(parcel: Parcel) : this() {
+        lessonId = parcel.readValue(Int::class.java.classLoader) as? Int
+        pass_status = parcel.readByte() != 0.toByte()
+    }
 
 
     data class Object (
@@ -31,6 +35,23 @@ class Lesson() : Serializable {
 
     ) : Serializable
 
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun describeContents(): Int {
+        TODO("Not yet implemented")
+    }
+
+    companion object CREATOR : Parcelable.Creator<Lesson> {
+        override fun createFromParcel(parcel: Parcel): Lesson {
+            return Lesson(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Lesson?> {
+            return arrayOfNulls(size)
+        }
+    }
 
 
 }

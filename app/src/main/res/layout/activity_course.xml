@@ -9,50 +9,48 @@
     android:background="@color/customWhite">
 
     <RelativeLayout
+        android:id="@+id/cuorsefragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:orientation="horizontal"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/content_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="20dp"
-            >
+<!--        <LinearLayout-->
+<!--            android:id="@+id/content_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_margin="20dp"-->
+<!--            >-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
 
 
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:mrl_rippleHover="true"
-            app:mrl_rippleOverlay="true">
+<!--        <com.balysv.materialripple.MaterialRippleLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            app:mrl_rippleHover="true"-->
+<!--            app:mrl_rippleOverlay="true">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp">
-                <Button
-                    android:id="@+id/continue_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
-                    android:textColor="@color/customWhite"
-                    android:text="Continue"
-                    >
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="20dp">-->
+<!--                <Button-->
+<!--                    android:id="@+id/continue_btn"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@color/colorPrimary"-->
+<!--                    android:textColor="@color/customWhite"-->
+<!--                    android:text="Continue"-->
+<!--                    >-->
 
-                </Button>
+<!--                </Button>-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
 
-        </com.balysv.materialripple.MaterialRippleLayout>
+<!--        </com.balysv.materialripple.MaterialRippleLayout>-->
 
     </RelativeLayout>
 
