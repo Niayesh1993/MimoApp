@@ -1,14 +1,19 @@
 package com.example.mimosampleapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.room.Room
 import com.example.mimosampleapp.R
+import com.example.mimosampleapp.database.AppDb
 import com.example.mimosampleapp.fragment.CourseFragment
 import com.example.mimosampleapp.model.Lesson
+import com.example.mimosampleapp.model.LessonContent
+import com.example.mimosampleapp.model.LessonInput
 import com.example.mimosampleapp.model.input.ApiResultModel
 import com.example.mimosampleapp.model.input.Course
 import com.example.mimosampleapp.service.user.UserService
@@ -24,24 +29,34 @@ class CourseActivity : AppCompatActivity(), View.OnClickListener {
     private var courseFragment: CourseFragment? = null
     private var fragmentManager: FragmentManager? = null
     private var service: UserService? = null
-    var Lesson_List: List<Lesson>? = null
+    var Lesson_List: MutableList<Lesson> = mutableListOf()
     var start_btn: ImageButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course)
         service = UserService(this)
+
         //val content_layout: LinearLayout = findViewById(R.id.content_layout)
-        //val continue_btn: Button = findViewById(R.id.continue_btn)
+       // val continue_btn: Button = findViewById(R.id.continue_btn)
        // continue_btn.setOnClickListener(this)
 
+        FetchLessonfromDatabase()
+        Lesson_List!!.size
+//        for (item: Lesson in this!!.Lesson_List!!)
+//        {
+//            try {
+//                if(!item.pass_status)
+//                {
+//
+//                }
+//            } catch (e: Exception) {
+//                e.message
+//            }
+//
+//        }
 
-       // val course = intent.getSerializableExtra("course") as? Course
-
-        FetchCourse()
-
-
-
+        Lesson_List!!.size
 
 
 
@@ -108,35 +123,145 @@ class CourseActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun FetchCourse()
+    fun FetchLessonfromDatabase()
     {
-        try {
-            service!!.GetLessons(object : ApiCallbackListener
+        val thread = Thread {
+            var Lesoon_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "LessonDB").build()
+            var Content_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "ContentDB").build()
+            var Input_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "InputDB").build()
+            Lesoon_db.lessonDAO().getAllLessons().forEach()
             {
-                override fun onSucceed(data: ApiResultModel) {
-                    if (data.data != null && data.data!!.size>0)
-                    {
 
-                        SettingsManager.setValue(Constants().PREF_LESSON_COUNTER, data.data!!.size)
-                        Lesson_List = data.data
+                var lesson = Lesson()
+                var LessonContent: MutableList<LessonContent> = mutableListOf()
+                var LessonInput: LessonInput = LessonInput()
 
-                        Lesson_List?.let { ShowCourseFragment(it) }
-                        //start_btn!!.visibility = View.VISIBLE
+                lesson.lessonId = it.lessonId
+                lesson.pass_status = it.LessonStatus
 
-                        // Toast.makeText(applicationContext, SettingsManager.getInt(Constants().PREF_LESSON_COUNTER).toString(), Toast.LENGTH_SHORT).show();
-                    }
+
+                Content_db.ContentDAO().selectContent(it.lessonId).forEach()
+                {
+                    val Lc = LessonContent()
+                    Lc.color = it.color
+                    Lc.text = it.text
+                    LessonContent.add(Lc)
+                }
+                lesson.contents = LessonContent
+
+                if (Input_db.InputDAO().selectInput(it.lessonId)!= null)
+                {
+                    var Li = LessonInput()
+                    Li.startIndex =  Input_db.InputDAO().selectInput(it.lessonId)!!.startIndex
+                    Li.endIndex =  Input_db.InputDAO().selectInput(it.lessonId)!!.endIndex
+
+                    lesson.input = Li
                 }
 
-                override fun onError(errors: String) {
+                Lesson_List.add(lesson)
 
-                    Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show();
-                }
 
-            })
-        } catch (e: Exception) {
-            e.message
+            }
         }
+        thread.start()
+
+
     }
+
+//    fun FetchInput(id: Int)
+//    {
+//        val thread = Thread {
+//            var Input_db =
+//                Room.databaseBuilder(applicationContext, AppDb::class.java, "InputDB").build()
+//            LessonInput = Input_db.InputDAO().selectInput(id)!!
+//        }
+//        thread.start()
+//
+//
+//    }
+
+//    fun FetchContent(id: Int)
+//    {
+//        val thread = Thread {
+//            var Content_db =
+//                Room.databaseBuilder(applicationContext, AppDb::class.java, "ContentDB").build()
+//            Content_db.ContentDAO().selectContent(id).forEach()
+//            {
+//                LessonContent.add(it)
+//            }
+//        }
+//        thread.start()
+//
+//
+//    }
+
+    fun Fetchfromdatabase()
+    {
+        val thread = Thread {
+            var Lesoon_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "LessonDB").build()
+            var Input_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "InputDB").build()
+            var Content_db =
+                Room.databaseBuilder(applicationContext, AppDb::class.java, "ContentDB").build()
+
+            Lesoon_db.lessonDAO().getAllLessons().forEach()
+            {
+                Log.i("Fetch Records", "Id:  : ${it.LessonStatus}")
+                var t = it.lessonId
+                var r = it.LessonStatus
+            }
+
+            Input_db.InputDAO().getAllInputs().forEach()
+            {
+                var t = it.startIndex
+                var r = it.endIndex
+            }
+
+            var C =  Content_db.ContentDAO().selectContent(5)
+            Content_db.ContentDAO().getAllcontent().forEach()
+            {
+                var t = it.color
+                var r = it.text
+
+            }
+
+
+        }
+        thread.start()
+    }
+
+//    fun FetchCourse()
+//    {
+//        try {
+//            service!!.GetLessons(object : ApiCallbackListener
+//            {
+//                override fun onSucceed(data: ApiResultModel) {
+//                    if (data.data != null && data.data!!.size>0)
+//                    {
+//                        SettingsManager.setValue(Constants().PREF_LESSON_COUNTER, data.data!!.size)
+//                        Lesson_List = data.data
+//
+//                        Lesson_List?.let { ShowCourseFragment(it) }
+//                        //start_btn!!.visibility = View.VISIBLE
+//
+//                        // Toast.makeText(applicationContext, SettingsManager.getInt(Constants().PREF_LESSON_COUNTER).toString(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//                override fun onError(errors: String) {
+//
+//                    Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show();
+//                }
+//
+//            })
+//        } catch (e: Exception) {
+//            e.message
+//        }
+//    }
 
     fun ShowCourseFragment(list: List<Lesson>)
     {

@@ -15,6 +15,6 @@ interface ContentDAO {
     fun getAllcontent() : List<ContentEntity>
 
     @Query("Select * from ContentEntity WHERE ContentId =:id")
-    fun selectContent(id: Int): LessonContent?
+    fun selectContent(id: Int): List<LessonContent>
 
 }

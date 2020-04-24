@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     {
         if (SettingsManager.getBoolean(Constants().PREF_ACTIVE_COURSE))
         {
-            Fetchfromdatabase()
+            start_btn!!.visibility = View.VISIBLE
+           // Fetchfromdatabase()
         }
         else if(!SettingsManager.getBoolean(Constants().PREF_ACTIVE_COURSE))
         {
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 override fun onSucceed(data: ApiResultModel) {
                     if (data.data != null && data.data!!.size>0)
                     {
-
                         SettingsManager.setValue(Constants().PREF_LESSON_COUNTER, data.data!!.size)
                         Lesson_List = data.data
                         Lesson_List?.let { Addtodatabase(it) }
@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 override fun onError(errors: String) {
-
                     Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show();
                 }
 
@@ -134,48 +133,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
             }
+
             thread.start()
 
         SettingsManager.setValue(Constants().PREF_ACTIVE_COURSE,true)
+        start_btn!!.visibility = View.VISIBLE
 
     }
-
-    fun Fetchfromdatabase()
-    {
-        val thread = Thread {
-            var Lesoon_db =
-                Room.databaseBuilder(applicationContext, AppDb::class.java, "LessonDB").build()
-            var Input_db =
-                Room.databaseBuilder(applicationContext, AppDb::class.java, "InputDB").build()
-            var Content_db =
-                Room.databaseBuilder(applicationContext, AppDb::class.java, "ContentDB").build()
-
-            Lesoon_db.lessonDAO().getAllLessons().forEach()
-            {
-                Log.i("Fetch Records", "Id:  : ${it.LessonStatus}")
-                var t = it.lessonId
-                var r = it.LessonStatus
-            }
-
-            Input_db.InputDAO().getAllInputs().forEach()
-            {
-                var t = it.startIndex
-                var r = it.endIndex
-            }
-
-           var C =  Content_db.ContentDAO().selectContent(5)
-            Content_db.ContentDAO().getAllcontent().forEach()
-            {
-                var t = it.color
-                var r = it.text
-
-            }
-
-
-        }
-        thread.start()
-    }
-
     override fun onClick(v: View?) {
 
         if (v != null) {
@@ -183,24 +147,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 R.id.start_btn -> {
 
-                    Lesson_List?.let { ShowCourse(it) }
+                    ShowCourse()
                 }
             }
         }
     }
 
-    fun ShowCourse(list: List<Lesson>)
+    fun ShowCourse()
     {
         try {
-            val course = Course()
-            course.Course = list
             val intent = Intent(this, CourseActivity::class.java)
-            //intent.putExtra("course" , course )
             startActivity(intent)
         } catch (e: Exception) {
             e.message
         }
-
 
     }
 
