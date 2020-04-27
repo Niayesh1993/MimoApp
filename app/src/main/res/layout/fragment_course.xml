@@ -12,44 +12,43 @@
         android:background="@color/colorPrimary">
 
         <LinearLayout
-                    android:id="@+id/content_layout"
+                    android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_margin="20dp"
                     >
 
-            <LinearLayout
-                android:id="@+id/wellDone_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="120dp"
-                android:orientation="vertical"
-                >
-
-                <ImageButton
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/welldone">
-                </ImageButton>
-
-                <ImageButton
-                    android:id="@+id/startAgain_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/next">
-
-                </ImageButton>
-
-
-            </LinearLayout>
-
-
-
                 </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wellDone_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/welldone">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/startAgain_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/next">
+
+            </ImageButton>
+
+
+        </LinearLayout>
 
 
 
@@ -77,8 +76,8 @@
 
                             <ImageButton
                                 android:id="@+id/done_btn"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:background="@drawable/done"
                                 android:visibility="gone"
@@ -88,8 +87,8 @@
 
                             <ImageButton
                                 android:id="@+id/wrong_btn"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:background="@drawable/wrong"
                                 android:visibility="gone"

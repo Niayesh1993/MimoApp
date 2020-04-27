@@ -1,11 +1,17 @@
 package com.example.mimosampleapp.activity
 
+import android.app.ProgressDialog
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.room.Room
 import com.amitshekhar.DebugDB
 import com.example.mimosampleapp.R
@@ -19,17 +25,49 @@ import com.example.mimosampleapp.model.input.ApiResultModel
 import com.example.mimosampleapp.service.user.UserService
 import com.example.mimosampleapp.utility.Constants
 import com.example.mimosampleapp.utility.SettingsManager
+import com.example.mimosampleapp.utility.Utils
 import com.example.mimosampleapp.utility.api.ApiCallbackListener
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private var service: UserService? = null
     var Lesson_List: List<Lesson>? = null
     var start_btn: ImageButton? = null
+    private var snackbar: Snackbar? = null
+    private var utils: Utils? = null
+    private var progressDialog: ProgressDialog? = null
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        utils = Utils(this)
+
+
+        snackbar = Snackbar.make(
+            findViewById(R.id.drawer_layout),
+            "No connection to the server, try again!",
+            Snackbar.LENGTH_LONG
+        )
+        snackbar!!.setAction("", null)
+        snackbar!!.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.orangeRed))
+
+        val view = snackbar!!.getView()
+        val params = view.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        view.layoutParams = params
+        val tv = view.findViewById(R.id.snackbar_text) as TextView
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tv.textAlignment = View.TEXT_ALIGNMENT_CENTER
+        } else {
+            tv.gravity = Gravity.CENTER_HORIZONTAL
+        }
+
+        progressDialog = ProgressDialog(this, R.style.MyAlertDialogStyle)
 
         service = UserService(this)
         SettingsManager.init(this)
@@ -47,7 +85,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         else if(!SettingsManager.getBoolean(Constants().PREF_ACTIVE_COURSE))
         {
-            FetchCourse()
+            if(utils!!.isNetworkAvailable())
+            {
+                if (snackbar!!.isShown())
+                    snackbar!!.dismiss()
+
+                FetchCourse()
+
+            }
+            else
+            {
+                snackbar!!.show()
+
+            }
         }
 
     }
@@ -55,12 +105,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     fun FetchCourse()
     {
         try {
+            progressDialog!!.show()
             service!!.GetLessons(object : ApiCallbackListener
             {
                 override fun onSucceed(data: ApiResultModel) {
                     if (data.data != null && data.data!!.size>0)
                     {
                         SettingsManager.setValue(Constants().PREF_LESSON_COUNTER, data.data!!.size)
+                        SettingsManager.setValue(Constants().PREF_LESSON_IN_PROGRESS,0)
+
                         Lesson_List = data.data
                         Lesson_List?.let { Addtodatabase(it) }
 
@@ -68,7 +121,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 override fun onError(errors: String) {
-                    Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
+                    progressDialog!!.dismiss()
                 }
 
             })
@@ -131,6 +185,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             thread.join()
 
         SettingsManager.setValue(Constants().PREF_ACTIVE_COURSE,true)
+        progressDialog!!.dismiss()
         ShowCourse()
 
     }

@@ -86,8 +86,6 @@ class CourseActivity : AppCompatActivity() {
         thread.start()
         thread.join()
 
-
-
     }
 
 

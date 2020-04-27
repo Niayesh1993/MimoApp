@@ -13,11 +13,13 @@ import androidx.room.Update
 import com.example.mimosampleapp.R
 import com.example.mimosampleapp.database.AppDb
 import com.example.mimosampleapp.database.CmpEntity
+import com.example.mimosampleapp.fragment.content_layout
 import com.example.mimosampleapp.model.LessonCompletion
 import com.example.mimosampleapp.model.LessonContent
 import com.example.mimosampleapp.model.input.Course
 import com.example.mimosampleapp.utility.Constants
 import com.example.mimosampleapp.utility.SettingsManager
+import kotlinx.android.synthetic.main.fragment_course.*
 import kotlin.concurrent.thread
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,6 +36,7 @@ val completion = LessonCompletion()
 var Done: ImageButton? = null
 var Incorrect: ImageButton? = null
 var Well_Done_Layout: LinearLayout? = null
+var finish_btn: ImageButton? = null
 
 
 
@@ -49,6 +52,7 @@ class CourseFragment : Fragment(), View.OnClickListener {
         if (arguments != null) {
             try {
                 ride = arguments!!.getParcelable(ARG_PARAM1)
+                NoInput = true
 
             } catch (e: Exception) {
 
@@ -69,7 +73,7 @@ class CourseFragment : Fragment(), View.OnClickListener {
 
     fun initView(view: View)
     {
-        content_layout = view.findViewById(R.id.content_layout)
+        content_layout = view.findViewById(R.id.contentLayout)
         continue_btn = view.findViewById(R.id.check_btn)
         continue_btn!!.setOnClickListener(this)
         editText = EditText(requireContext())
@@ -78,6 +82,9 @@ class CourseFragment : Fragment(), View.OnClickListener {
         Incorrect = view.findViewById(R.id.wrong_btn)
         Incorrect!!.setOnClickListener(this)
         Well_Done_Layout = view.findViewById(R.id.wellDone_layout)
+        finish_btn = view.findViewById(R.id.startAgain_btn)
+        finish_btn!!.setOnClickListener(this)
+
 
         UpdateUI()
     }
@@ -184,20 +191,26 @@ class CourseFragment : Fragment(), View.OnClickListener {
                             AddCompleteLesson(completion)
                             UpdateLessonStatus(completion.ID!!)
 
-                            if (LessonCounter>=SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
+                            if (LessonCounter >= SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
                             {
                                 Well_Done_Layout!!.visibility = View.VISIBLE
+                                contentLayout!!.visibility = View.GONE
+                                continue_btn!!.visibility = View.GONE
+                                Incorrect!!.visibility = View.GONE
                             }
                             else
                             {
                                 Done!!.visibility = View.VISIBLE
                                 continue_btn!!.visibility = View.GONE
+                                Incorrect!!.visibility = View.GONE
+                                contentLayout!!.visibility = View.GONE
 
                             }
 
                         }
                         else
                         {
+                            Incorrect!!.visibility = View.VISIBLE
                             editText!!.setText("")
                         }
                     }
@@ -210,7 +223,7 @@ class CourseFragment : Fragment(), View.OnClickListener {
                         AddCompleteLesson(completion)
                         UpdateLessonStatus(completion.ID!!)
 
-                        if (LessonCounter>=SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
+                        if (LessonCounter >= SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
                         {
                             Well_Done_Layout!!.visibility = View.VISIBLE
                         }
@@ -294,13 +307,22 @@ class CourseFragment : Fragment(), View.OnClickListener {
     {
 
         val thread = Thread {
-            var db =
+            var Lesoon_db =
                 Room.databaseBuilder(requireContext(), AppDb::class.java, "LessonDB").build()
 
-            db.lessonDAO().DeletLesson()
-            db.ContentDAO().DeletContent()
-            db.InputDAO().DeletInput()
-            db.CmpDAO().DeletCmp()
+            var Input_db =
+                Room.databaseBuilder(requireContext(), AppDb::class.java, "InputDB").build()
+
+            var Content_db =
+                Room.databaseBuilder(requireContext(), AppDb::class.java, "ContentDB").build()
+
+            var Cmp_db =
+                Room.databaseBuilder(requireContext(), AppDb::class.java, "CmpDB").build()
+
+            Lesoon_db.lessonDAO().DeletLesson()
+            Content_db.ContentDAO().DeletContent()
+            Input_db.InputDAO().DeletInput()
+            Cmp_db.CmpDAO().DeletCmp()
 
             getActivity()!!.onBackPressed()
 

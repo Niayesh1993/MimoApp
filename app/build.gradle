@@ -13,8 +13,9 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
     }
 
     buildTypes {
@@ -70,5 +71,8 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+    implementation 'com.google.android.material:material:1.1.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
 
 }
