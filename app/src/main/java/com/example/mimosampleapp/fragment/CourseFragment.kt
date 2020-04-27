@@ -8,11 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.room.Room
+import androidx.room.Update
 import com.example.mimosampleapp.R
+import com.example.mimosampleapp.database.AppDb
+import com.example.mimosampleapp.database.CmpEntity
 import com.example.mimosampleapp.model.LessonCompletion
 import com.example.mimosampleapp.model.LessonContent
 import com.example.mimosampleapp.model.input.Course
+import com.example.mimosampleapp.utility.Constants
 import com.example.mimosampleapp.utility.SettingsManager
+import kotlin.concurrent.thread
 
 // TODO: Rename parameter arguments, choose names that match
 
@@ -24,6 +30,10 @@ var editText: EditText? = null
 var answer: String =""
 var NoInput: Boolean = true
 var LessonCounter = 0
+val completion = LessonCompletion()
+var Done: ImageButton? = null
+var Incorrect: ImageButton? = null
+var Well_Done_Layout: LinearLayout? = null
 
 
 
@@ -43,9 +53,6 @@ class CourseFragment : Fragment(), View.OnClickListener {
             } catch (e: Exception) {
 
             }
-            var t = ride
-          var r =   t!!.Course
-
         }
     }
 
@@ -62,37 +69,45 @@ class CourseFragment : Fragment(), View.OnClickListener {
 
     fun initView(view: View)
     {
-         content_layout = view.findViewById(R.id.content_layout)
-        continue_btn = view.findViewById(R.id.continue_btn)
+        content_layout = view.findViewById(R.id.content_layout)
+        continue_btn = view.findViewById(R.id.check_btn)
         continue_btn!!.setOnClickListener(this)
         editText = EditText(requireContext())
-
-        BindData()
-    }
-
-    fun BindData()
-    {
+        Done = view.findViewById(R.id.done_btn)
+        Done!!.setOnClickListener(this)
+        Incorrect = view.findViewById(R.id.wrong_btn)
+        Incorrect!!.setOnClickListener(this)
+        Well_Done_Layout = view.findViewById(R.id.wellDone_layout)
 
         UpdateUI()
-
     }
+
 
     fun UpdateUI()
     {
-//        val completion = LessonCompletion()
-//        completion.ID = leson!!.lessonId
-//        completion.StartTime = System.currentTimeMillis()
-
+        Done!!.visibility = View.GONE
+        Incorrect!!.visibility = View.GONE
+        Well_Done_Layout!!.visibility = View.GONE
+        continue_btn!!.visibility = View.VISIBLE
         content_layout!!.removeAllViews()
 
+        LessonCounter = SettingsManager.getInt(Constants().PREF_LESSON_IN_PROGRESS)
+
+        var t = LessonCounter
+
         var leson = LessonCounter?.let { ride!!.Course!!.get(it) }
+
+
+        completion.ID = leson!!.lessonId
+        completion.StartTime = System.currentTimeMillis()
+
         if (leson!!.input != null)
         {
             NoInput = false
             var temp = ""
             for (item : LessonContent in leson.contents!!)
             {
-                temp = temp+item.text
+                temp += item.text
             }
 
             try {
@@ -158,28 +173,140 @@ class CourseFragment : Fragment(), View.OnClickListener {
         if (v != null) {
             when (v.getId()) {
 
-                R.id.continue_btn -> {
+                R.id.check_btn -> {
                     if (!NoInput)
                     {
-                        if (editText!!.text.equals(answer))
+                        if (editText!!.text.toString() == answer )
                         {
+                            LessonCounter ++
+                            SettingsManager.setValue(Constants().PREF_LESSON_IN_PROGRESS, LessonCounter)
+                            completion.EndTime = System.currentTimeMillis()
+                            AddCompleteLesson(completion)
+                            UpdateLessonStatus(completion.ID!!)
 
+                            if (LessonCounter>=SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
+                            {
+                                Well_Done_Layout!!.visibility = View.VISIBLE
+                            }
+                            else
+                            {
+                                Done!!.visibility = View.VISIBLE
+                                continue_btn!!.visibility = View.GONE
+
+                            }
+
+                        }
+                        else
+                        {
+                            editText!!.setText("")
                         }
                     }
                     else
                     {
-                        LessonCounter =+ 1
-                        UpdateUI()
+
+                        LessonCounter ++
+                        SettingsManager.setValue(Constants().PREF_LESSON_IN_PROGRESS, LessonCounter)
+                        completion.EndTime = System.currentTimeMillis()
+                        AddCompleteLesson(completion)
+                        UpdateLessonStatus(completion.ID!!)
+
+                        if (LessonCounter>=SettingsManager.getInt(Constants().PREF_LESSON_COUNTER))
+                        {
+                            Well_Done_Layout!!.visibility = View.VISIBLE
+                        }
+                        else
+                        {
+                            continue_btn!!.visibility = View.GONE
+                            Done!!.visibility = View.VISIBLE
+
+
+                        }
 
                     }
 
+                }
+                R.id.done_btn ->
+                {
+                    UpdateUI()
 
-
-
+                }
+                R.id.startAgain_btn ->
+                {
+                    FinishCourse()
 
                 }
             }
         }
     }
+
+    fun UpdateLessonStatus(id: Int)
+    {
+        val thread = Thread {
+
+            try {
+                var Lesoon_db =
+                    Room.databaseBuilder(requireContext(), AppDb::class.java, "LessonDB").build()
+
+                Lesoon_db.lessonDAO().updateLesson(id, true)
+            } catch (e: Exception) {
+            }
+
+        }
+        thread.start()
+
+    }
+
+    fun AddCompleteLesson(cmp: LessonCompletion)
+    {
+        val thread = Thread {
+
+            try {
+                var Cmp_db =
+                    Room.databaseBuilder(requireContext(), AppDb::class.java, "CmpDB").build()
+
+                var cmpEntity = CmpEntity()
+                cmpEntity.CmpId = cmp.ID!!
+                cmpEntity.start = cmp.StartTime!!
+                cmpEntity.end = cmp.EndTime!!
+
+                Cmp_db.CmpDAO().saveCmp(cmpEntity)
+
+
+            } catch (e: Exception) {
+            }
+
+        }
+        thread.start()
+    }
+
+    fun FinishCourse()
+    {
+
+        SettingsManager.clearValue(Constants().PREF_LESSON_COUNTER)
+        SettingsManager.clearValue(Constants().PREF_LESSON_IN_PROGRESS)
+        SettingsManager.setValue(Constants().PREF_ACTIVE_COURSE, false)
+
+        ClearData()
+
+    }
+
+    fun ClearData()
+    {
+
+        val thread = Thread {
+            var db =
+                Room.databaseBuilder(requireContext(), AppDb::class.java, "LessonDB").build()
+
+            db.lessonDAO().DeletLesson()
+            db.ContentDAO().DeletContent()
+            db.InputDAO().DeletInput()
+            db.CmpDAO().DeletCmp()
+
+            getActivity()!!.onBackPressed()
+
+        }
+        thread.start()
+    }
+
 
 }

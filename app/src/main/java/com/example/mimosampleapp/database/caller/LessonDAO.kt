@@ -1,9 +1,9 @@
-package com.example.mimosampleapp.database
+package com.example.mimosampleapp.database.caller
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.mimosampleapp.model.Lesson
+import com.example.mimosampleapp.database.LessonEntity
 
 @Dao
 interface LessonDAO {
@@ -14,10 +14,11 @@ interface LessonDAO {
     @Query(value = "Select * from LessonEntity")
     fun getAllLessons() : List<LessonEntity>
 
-//    @Query("Select * from LessonEntity WHERE lessonId =:id")
-//    fun selectLesson(id: Int): Lesson?
 
     @Query("UPDATE LessonEntity SET LessonStatus = :lstatus WHERE lessonId = :lid")
     fun updateLesson(lid: Int, lstatus: Boolean?): Int
+
+    @Query("DELETE FROM LessonEntity")
+    fun DeletLesson()
 
 }

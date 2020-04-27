@@ -1,8 +1,9 @@
-package com.example.mimosampleapp.database
+package com.example.mimosampleapp.database.caller
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.mimosampleapp.database.ContentEntity
 import com.example.mimosampleapp.model.LessonContent
 
 @Dao
@@ -16,5 +17,8 @@ interface ContentDAO {
 
     @Query("Select * from ContentEntity WHERE ContentId =:id")
     fun selectContent(id: Int): List<LessonContent>
+
+    @Query("DELETE FROM ContentEntity")
+    fun DeletContent()
 
 }

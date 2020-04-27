@@ -1,9 +1,9 @@
-package com.example.mimosampleapp.database
+package com.example.mimosampleapp.database.caller
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.mimosampleapp.model.LessonContent
+import com.example.mimosampleapp.database.InputEntity
 import com.example.mimosampleapp.model.LessonInput
 
 @Dao
@@ -17,4 +17,7 @@ interface InputDAO {
 
     @Query("Select * from InputEntity WHERE lnputId =:id")
     fun selectInput(id: Int): LessonInput?
+
+    @Query("DELETE FROM InputEntity")
+    fun DeletInput()
 }

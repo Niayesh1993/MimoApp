@@ -12,12 +12,6 @@ class LessonEntity {
     @PrimaryKey
     var lessonId: Int = 0
 
-//    @ColumnInfo (name ="LessonContent")
-//    var LessonContent:  List<LessonContent>? = null
-
-//    @ColumnInfo (name ="LessonIndex")
-//    var LessonIndex:  LessonInput = LessonInput()
-
     @ColumnInfo (name ="LessonStatus")
     var LessonStatus:  Boolean = false
 }

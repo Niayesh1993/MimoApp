@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 class ContentEntity {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var ID: Int = 0
 
     @ColumnInfo

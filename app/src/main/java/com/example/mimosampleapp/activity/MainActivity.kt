@@ -1,15 +1,13 @@
 package com.example.mimosampleapp.activity
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.room.Room
+import com.amitshekhar.DebugDB
 import com.example.mimosampleapp.R
 import com.example.mimosampleapp.database.AppDb
 import com.example.mimosampleapp.database.ContentEntity
@@ -18,12 +16,10 @@ import com.example.mimosampleapp.database.LessonEntity
 import com.example.mimosampleapp.model.Lesson
 import com.example.mimosampleapp.model.LessonContent
 import com.example.mimosampleapp.model.input.ApiResultModel
-import com.example.mimosampleapp.model.input.Course
 import com.example.mimosampleapp.service.user.UserService
 import com.example.mimosampleapp.utility.Constants
 import com.example.mimosampleapp.utility.SettingsManager
 import com.example.mimosampleapp.utility.api.ApiCallbackListener
-import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -39,7 +35,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         SettingsManager.init(this)
         start_btn = findViewById(R.id.start_btn)
         start_btn!!.setOnClickListener(this)
-        CheckActiveCourse()
+
 
     }
 
@@ -47,8 +43,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     {
         if (SettingsManager.getBoolean(Constants().PREF_ACTIVE_COURSE))
         {
-            start_btn!!.visibility = View.VISIBLE
-           // Fetchfromdatabase()
+            ShowCourse()
         }
         else if(!SettingsManager.getBoolean(Constants().PREF_ACTIVE_COURSE))
         {
@@ -106,7 +101,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     if (item.input != null)
                     {
                         var inputEntity = InputEntity()
-                        inputEntity.ID = (0..100).random()
                         inputEntity.lnputId = item.lessonId!!
                         inputEntity.startIndex = item.input!!.startIndex!!
                         inputEntity.endIndex = item.input!!.endIndex!!
@@ -119,7 +113,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     {
                         try {
                             var contentEntity = ContentEntity()
-                            contentEntity.ID = (0..100).random()
                             contentEntity.ContentId = item.lessonId!!
                             contentEntity.color = Citem.color!!
                             contentEntity.text = Citem.text!!
@@ -135,19 +128,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             thread.start()
+            thread.join()
 
         SettingsManager.setValue(Constants().PREF_ACTIVE_COURSE,true)
-        start_btn!!.visibility = View.VISIBLE
+        ShowCourse()
 
     }
     override fun onClick(v: View?) {
 
-        if (v != null) {
+        val t = DebugDB.getAddressLog()
+       if (v != null) {
             when (v.getId()) {
 
                 R.id.start_btn -> {
 
-                    ShowCourse()
+                    CheckActiveCourse()
                 }
             }
         }
