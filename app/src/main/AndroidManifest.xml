@@ -17,7 +17,6 @@
         android:roundIcon="@drawable/mimoicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        android:allowBackup="false"
         <activity android:name=".activity.CourseActivity"></activity>
         <activity android:name=".activity.SplashScreenActivity">
             <intent-filter>
