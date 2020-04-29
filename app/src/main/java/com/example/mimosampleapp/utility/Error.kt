@@ -15,19 +15,8 @@ open class Error (code: Int, message: String?) {
         this.message = message
     }
 
-    fun getCode(): Int {
-        return code
-    }
-
-    fun setCode(code: Int) {
-        this.code = code
-    }
-
     fun getMessage(): String? {
         return message
     }
 
-    fun setMessage(message: String) {
-        this.message = message
-    }
 }

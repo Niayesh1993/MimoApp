@@ -1,7 +1,6 @@
 package com.example.mimosampleapp.service.user
 
 import android.content.Context
-import android.util.Log
 import com.example.mimosampleapp.model.input.ApiResultModel
 import com.example.mimosampleapp.service.caller.UserCaller
 import com.example.mimosampleapp.utility.Constants
@@ -22,8 +21,7 @@ class UserService(context: Context) {
     init {
         this.retrofit = RetrofitManager(
             context,
-            Constants().URL_BASE,
-            false
+            Constants().URL_BASE
         ).getRetrofitInstance()!!
         caller = retrofit.create(UserCaller::class.java)
 
@@ -42,13 +40,9 @@ class UserService(context: Context) {
                     try {
                         Helpers().HandleResponse(response, apiCallbackListener)
                     } catch (e: Exception) {
-                        // FirebaseCrash.report(e);
                         apiCallbackListener.onError("")
-                        //Toast.makeText(context,"Error in login"+e.getMessage(),Toast.LENGTH_LONG).show();
-                        Log.e("Error in login", e.message)
                     }
                 }
-
                 override fun onFailure(call: Call<ApiResultModel>, t: Throwable) {
                     Helpers().HandleErrors(t, context, apiCallbackListener)
                 }

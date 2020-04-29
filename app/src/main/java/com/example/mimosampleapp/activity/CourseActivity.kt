@@ -28,11 +28,8 @@ class CourseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_course)
         service = UserService(this)
 
-
         FetchLessonfromDatabase()
         ShowCourseFragment(Lesson_List)
-
-
 
     }
 

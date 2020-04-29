@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.room.Room
-import com.amitshekhar.DebugDB
 import com.example.mimosampleapp.R
 import com.example.mimosampleapp.database.AppDb
 import com.example.mimosampleapp.database.ContentEntity
@@ -191,7 +190,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
     override fun onClick(v: View?) {
 
-        val t = DebugDB.getAddressLog()
        if (v != null) {
             when (v.getId()) {
 

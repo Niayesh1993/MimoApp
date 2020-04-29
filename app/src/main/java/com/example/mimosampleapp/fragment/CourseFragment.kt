@@ -42,9 +42,6 @@ var finish_btn: ImageButton? = null
 
 
 class CourseFragment : Fragment(), View.OnClickListener {
-    // TODO: Rename and change types of parameters
-    private var param1: Course? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +59,6 @@ class CourseFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
 
          var view = inflater.inflate(R.layout.fragment_course, container, false)
         SettingsManager.init(requireContext())
@@ -100,8 +96,6 @@ class CourseFragment : Fragment(), View.OnClickListener {
 
         LessonCounter = SettingsManager.getInt(Constants().PREF_LESSON_IN_PROGRESS)
 
-        var t = LessonCounter
-
         var leson = LessonCounter?.let { ride!!.Course!!.get(it) }
 
 
@@ -118,20 +112,20 @@ class CourseFragment : Fragment(), View.OnClickListener {
             }
 
             try {
-                    var s = leson.input!!.startIndex
-                    var end = leson.input!!.endIndex
-                    answer = temp.substring(s!!,end!!)
-                    var f = temp.substring(0,s)
-                    var l = temp.substring(end,temp.lastIndex+1)
+                    var startIndex = leson.input!!.startIndex
+                    var endIndex = leson.input!!.endIndex
+                    answer = temp.substring(startIndex!!,endIndex!!)
+                    var f = temp.substring(0,startIndex)
+                    var l = temp.substring(endIndex,temp.lastIndex+1)
 
 
 
-                        val textView = TextView(requireContext())
-                        textView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                        textView.setText(f)
-                        textView.setTextColor(Color.parseColor("#000000"))
-                        textView.setPadding(2,2,2,2)
-                        content_layout!!.addView(textView)
+                        val firstIndex_txt = TextView(requireContext())
+                        firstIndex_txt.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        firstIndex_txt.setText(f)
+                        firstIndex_txt.setTextColor(Color.parseColor("#000000"))
+                        firstIndex_txt.setPadding(2,2,2,2)
+                        content_layout!!.addView(firstIndex_txt)
 
 
                         editText!!.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -139,12 +133,12 @@ class CourseFragment : Fragment(), View.OnClickListener {
                         editText!!.setPadding(2,2,2,2)
                         content_layout!!.addView(editText)
 
-                        val textView1 = TextView(requireActivity())
-                        textView1.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                        textView1.setText(l)
-                        textView1.setTextColor(Color.parseColor("#000000"))
-                        textView1.setPadding(2,2,2,2)
-                        content_layout!!.addView(textView1)
+                        val endIndex_txt = TextView(requireActivity())
+                        endIndex_txt.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        endIndex_txt.setText(l)
+                        endIndex_txt.setTextColor(Color.parseColor("#000000"))
+                        endIndex_txt.setPadding(2,2,2,2)
+                        content_layout!!.addView(endIndex_txt)
 
 
             } catch (e: Exception) {
